@@ -19,6 +19,27 @@ document.addEventListener('DOMContentLoaded', () => {
   // Define the required password. Change this value to your desired password.
   const REQUIRED_PASSWORD = 'hemmeligkode';
 
+  // Track whether the user has authenticated. Until authenticated, upload actions will be blocked.
+  let authenticated = false;
+
+  // Load any previously saved images from localStorage so they persist across sessions. If none
+  // exist, default to an empty array. Images are stored as base64 data URIs under the key 'gallery'.
+  let savedImages = [];
+  try {
+    const stored = localStorage.getItem('gallery');
+    if (stored) {
+      savedImages = JSON.parse(stored);
+      savedImages.forEach((src) => {
+        const img = document.createElement('img');
+        img.src = src;
+        gallery.appendChild(img);
+      });
+    }
+  } catch (err) {
+    // If JSON parsing fails or localStorage is unavailable, ignore gracefully
+    savedImages = [];
+  }
+
   /**
    * Checks the entered password and either hides the overlay or shows an error.
    */
@@ -26,6 +47,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const entered = passwordInput.value;
     if (entered === REQUIRED_PASSWORD) {
       authOverlay.style.display = 'none';
+      // Mark the user as authenticated so subsequent uploads are allowed
+      authenticated = true;
     } else {
       errorMessage.textContent = 'Forkert adgangskode, prøv venligst igen.';
       passwordInput.value = '';
@@ -59,6 +82,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const img = document.createElement('img');
         img.src = e.target.result;
         gallery.appendChild(img);
+        // Persist the uploaded image in localStorage so it remains across sessions on this device.
+        savedImages.push(img.src);
+        try {
+          localStorage.setItem('gallery', JSON.stringify(savedImages));
+        } catch (err) {
+          // If saving fails (e.g. storage quota exceeded), silently ignore.
+        }
       };
       reader.readAsDataURL(file);
     });
@@ -66,6 +96,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Event listener for the file input (click-to-select)
   fileInput.addEventListener('change', (event) => {
+    // If the user hasn't authenticated yet, show the authentication overlay and halt upload.
+    if (!authenticated) {
+      authOverlay.style.display = 'flex';
+      // don't process files until password is entered
+      return;
+    }
     if (event.target.files && event.target.files.length > 0) {
       handleFiles(event.target.files);
     }
@@ -88,6 +124,11 @@ document.addEventListener('DOMContentLoaded', () => {
     uploadArea.classList.remove('dragover');
     const dt = event.dataTransfer;
     if (dt && dt.files && dt.files.length > 0) {
+      // Require authentication before handling dropped files
+      if (!authenticated) {
+        authOverlay.style.display = 'flex';
+        return;
+      }
       handleFiles(dt.files);
       dt.clearData();
     }
