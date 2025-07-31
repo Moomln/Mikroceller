@@ -108,6 +108,7 @@ footer {
 
 /*
  * Authentication overlay styles. The overlay covers the entire page and centers the login card.
+ * By default it is hidden; it is shown via JavaScript when authentication is required.
  */
 .auth-overlay {
   position: fixed;
@@ -116,7 +117,8 @@ footer {
   width: 100%;
   height: 100%;
   background: rgba(255, 255, 255, 0.9);
-  display: flex;
+  /* hide overlay by default; JS will set display to flex when needed */
+  display: none;
   align-items: center;
   justify-content: center;
   z-index: 1000;
