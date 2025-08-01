@@ -1,50 +1,54 @@
 <!DOCTYPE html>
 <html lang="da">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mikroceller</title>
-    <link rel="stylesheet" href="style.css">
-    <!-- Import a modern sans-serif font from Google Fonts. This will load if the user has an internet connection. -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mikroceller</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <!-- Authentication overlay: shown on page load to restrict uploading to authorised users. -->
-    <div class="auth-overlay" id="auth-overlay">
-        <div class="auth-card">
-            <h2>Adgang påkrævet</h2>
-            <p>Indtast din adgangskode for at fortsætte.</p>
-            <input type="password" id="password-input" placeholder="Adgangskode" autocomplete="current-password">
-            <button id="password-submit">Log ind</button>
-            <p class="error-message" id="error-message" aria-live="polite"></p>
-        </div>
+  <!-- Authentication overlay: hidden by default; ask for password to upload images -->
+  <div class="auth-overlay" id="auth-overlay">
+    <div class="auth-card">
+      <h2>Adgang påkrævet</h2>
+      <p>Indtast din adgangskode for at fortsætte.</p>
+      <input type="password" id="password-input" placeholder="Adgangskode" autocomplete="current-password">
+      <button id="password-submit">Log ind</button>
+      <p class="error-message" id="error-message" aria-live="polite"></p>
     </div>
+  </div>
 
-    <header>
-        <!-- Update the site heading to reflect the repository name -->
-        <h1>Mikroceller</h1>
-        <p>Upload dine malerier og vis dem smukt.</p>
-    </header>
-    <main>
-        <!-- Upload section: uses a label to style the file input element. Drag and drop is also supported. -->
-        <section class="upload-section">
-            <label class="upload-area" for="file-input">
-                <div class="upload-message">
-                    <span>Træk og slip dine malerier her eller klik for at vælge</span>
-                </div>
-                <input type="file" id="file-input" accept="image/*" multiple>
-            </label>
-        </section>
-        <!-- Gallery: uploaded images will populate here -->
-        <section class="gallery" id="gallery">
-            <!-- Dynamically inserted images will appear inside this container. -->
-        </section>
-    </main>
-    <footer>
-        <p>&copy; 2025 Dit Galleri</p>
-    </footer>
-    <script src="script.js"></script>
+  <!-- Header with site title and tagline -->
+  <header>
+    <!-- Pass button top-left to allow owner to authenticate before uploading -->
+    <button id="auth-button" class="auth-button">Pass</button>
+    <h1>Mikroceller</h1>
+    <p>Upload dine malerier og vis dem smukt.</p>
+  </header>
+
+  <main>
+    <!-- Upload section -->
+    <section class="upload-section">
+      <label class="upload-area" for="file-input">
+        <div class="upload-message">
+          <span>Træk og slip dine malerier her eller klik for at vælge</span>
+        </div>
+        <input type="file" id="file-input" accept="image/*" multiple>
+      </label>
+    </section>
+
+    <!-- Gallery -->
+    <section class="gallery" id="gallery">
+      <!-- Images will be inserted here dynamically -->
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Dit Galleri</p>
+  </footer>
+  <script src="script.js"></script>
 </body>
 </html>
