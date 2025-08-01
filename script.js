@@ -16,6 +16,23 @@ document.addEventListener('DOMContentLoaded', () => {
   const passwordSubmit = document.getElementById('password-submit');
   const errorMessage = document.getElementById('error-message');
 
+  // Create a "Pass" button if it does not already exist. This button lives in the top-left
+  // corner and allows the owner to authenticate before uploading images.
+  let authButton = document.getElementById('auth-button');
+  if (!authButton) {
+    authButton = document.createElement('button');
+    authButton.id = 'auth-button';
+    authButton.className = 'auth-button';
+    authButton.textContent = 'Pass';
+    // Insert at beginning of body so it appears near the top-left
+    document.body.prepend(authButton);
+  }
+
+  // Hide the authentication overlay by default until the owner chooses to log in.
+  if (authOverlay) {
+    authOverlay.style.display = 'none';
+  }
+
   // Define the required password. Change this value to your desired password.
   const REQUIRED_PASSWORD = 'hemmeligkode';
 
@@ -69,6 +86,18 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // When the owner clicks the "Pass" button, reveal the authentication overlay and focus the
+  // password input. Clear any previous error message and reset the input field.
+  if (authButton) {
+    authButton.addEventListener('click', () => {
+      errorMessage.textContent = '';
+      passwordInput.value = '';
+      authOverlay.style.display = 'flex';
+      // focus the input after a short delay to ensure overlay is visible
+      setTimeout(() => passwordInput.focus(), 0);
+    });
+  }
+
   /**
    * Handles a list of files by reading each image file and appending it to the gallery.
    * @param {FileList|Array} files - The files selected via input or dropped via drag-and-drop.
@@ -96,10 +125,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Event listener for the file input (click-to-select)
   fileInput.addEventListener('change', (event) => {
-    // If the user hasn't authenticated yet, show the authentication overlay and halt upload.
+    // If the user hasn't authenticated yet, inform them to authenticate via the Pass button and halt upload.
     if (!authenticated) {
-      authOverlay.style.display = 'flex';
-      // don't process files until password is entered
+      alert('Du skal logge ind via "Pass"-knappen for at uploade billeder.');
+      // Reset input so the same file can be chosen again after authentication
+      event.target.value = '';
       return;
     }
     if (event.target.files && event.target.files.length > 0) {
@@ -126,7 +156,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (dt && dt.files && dt.files.length > 0) {
       // Require authentication before handling dropped files
       if (!authenticated) {
-        authOverlay.style.display = 'flex';
+        alert('Du skal logge ind via "Pass"-knappen for at uploade billeder.');
         return;
       }
       handleFiles(dt.files);
